@@ -8,6 +8,8 @@ import (
 	"server-content/internal/db/database"
 	"server-content/internal/handlers"
 	"server-content/internal/logger"
+	"server-content/internal/services"
+	"context"
 
 	"github.com/joho/godotenv"
 )
@@ -43,6 +45,9 @@ func main() {
 		port = "8082"
 	}
 
+	// Start Settings Sync Scheduler
+	go services.StartSettingSyncScheduler(context.Background())
+
 	// Initialize handlers
 	h := handlers.NewHandler(handlers.Handler{})
 
@@ -53,15 +58,22 @@ func main() {
 	})
 	http.HandleFunc("/logs", h.HandleLogList)
 	http.HandleFunc("/logs/", h.HandleLogFile)
+	http.HandleFunc("/vast/", h.Vast)
 	http.HandleFunc("/", h.Home)
 
 	fmt.Printf("Server started at http://localhost:%s\n", port)
 
 	// CORS middleware
 	corsHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		origin := r.Header.Get("Origin")
+		if origin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		} else {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+		}
 		w.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Range")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return

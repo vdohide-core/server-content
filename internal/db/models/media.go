@@ -6,7 +6,6 @@ import (
 	"server-content/internal/lib/goose"
 )
 
-
 // MediaMetadata holds embedded metadata for a Media record.
 // Matches: mediaMetadataSchema (TS)
 type MediaMetadata struct {
@@ -49,7 +48,7 @@ type PrewarmEntry struct {
 type Media struct {
 	ID         string                  `bson:"_id" json:"id" goose:"required,default:uuid"`
 	Type       string                  `bson:"type" json:"type" goose:"default:video"`
-	FileName   *string                 `bson:"file_name,omitempty" json:"fileName,omitempty"`
+	FileName   *string                 `bson:"fileName,omitempty" json:"fileName,omitempty"`
 	MimeType   *string                 `bson:"mimeType,omitempty" json:"mimeType,omitempty"`
 	Resolution *string                 `bson:"resolution,omitempty" json:"resolution,omitempty" goose:"index"`
 	StorageID  *string                 `bson:"storageId,omitempty" json:"storageId,omitempty" goose:"ref:storages,index"`
@@ -57,7 +56,8 @@ type Media struct {
 	Path       *string                 `bson:"path,omitempty" json:"path,omitempty"`
 	SourceHash *string                 `bson:"sourceHash,omitempty" json:"sourceHash,omitempty" goose:"index"`
 	FileID     *string                 `bson:"fileId,omitempty" json:"fileId,omitempty" goose:"ref:files,index"`
-	ClonedFrom *string                 `bson:"clonedFrom,omitempty" json:"clonedFrom,omitempty" goose:"ref:files,index"`
+	UserID     *string                 `bson:"userId,omitempty" json:"userId,omitempty" goose:"ref:user,index"`
+	ClonedFrom *string                 `bson:"clonedFrom,omitempty" json:"clonedFrom,omitempty" goose:"ref:medias,index"`
 	Metadata   *MediaMetadata          `bson:"metadata,omitempty" json:"metadata,omitempty"`
 	Prewarm    map[string]PrewarmEntry `bson:"prewarm,omitempty" json:"prewarm,omitempty"`
 	DeletedAt  *time.Time              `bson:"deletedAt,omitempty" json:"deletedAt,omitempty"`

@@ -46,13 +46,17 @@ func Collection(name string) *mongo.Collection {
 
 // ─── Collection Accessors ─────────────────────────────────────
 
-func Files() *mongo.Collection        { return goose.Collection("files") }
-func Medias() *mongo.Collection       { return goose.Collection("medias") }
-func Storages() *mongo.Collection     { return goose.Collection("storages") }
-func Ingests() *mongo.Collection      { return goose.Collection("ingests") }
-func Settings() *mongo.Collection     { return goose.Collection("settings") }
-func VideoProcess() *mongo.Collection { return goose.Collection("video_process") }
-func Oauths() *mongo.Collection       { return goose.Collection("oauths") }
+func Files() *mongo.Collection         { return goose.Collection("files") }
+func Medias() *mongo.Collection        { return goose.Collection("medias") }
+func Storages() *mongo.Collection      { return goose.Collection("storages") }
+func Ingests() *mongo.Collection       { return goose.Collection("ingests") }
+func Settings() *mongo.Collection      { return goose.Collection("settings") }
+func VideoProcess() *mongo.Collection  { return goose.Collection("video_process") }
+func Oauths() *mongo.Collection        { return goose.Collection("oauths") }
+func CustomDomains() *mongo.Collection { return goose.Collection("custom_domains") }
+func Ads() *mongo.Collection           { return goose.Collection("ads") }
+func Spaces() *mongo.Collection        { return goose.Collection("spaces") }
+func Workspaces() *mongo.Collection    { return goose.Collection("workspaces") }
 
 // ─── Indexes ──────────────────────────────────────────────────
 

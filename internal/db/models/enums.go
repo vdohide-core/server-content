@@ -124,3 +124,12 @@ const (
 	DmcaTypeTrademark = "trademark"
 	DmcaTypeOther     = "other"
 )
+
+// ─── Plan Types ──────────────────────────────────────────────────────
+
+const (
+	PlanTypeHobby      = "hobby"
+	PlanTypePro        = "pro"
+	PlanTypeBusiness   = "business"
+	PlanTypeEnterprise = "enterprise"
+)
