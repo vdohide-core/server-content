@@ -37,7 +37,7 @@ func GetAdvertHobby() AdvertHobby {
 }
 
 // FindAdByID looks up an ad by ID from the in-memory ads cache.
-func FindAdByID(adID string) *models.Ad {
+func FindAdByID(adID string) *models.Ads {
 	adCacheMu.RLock()
 	defer adCacheMu.RUnlock()
 
@@ -151,13 +151,13 @@ func GetAdvertJavascript() AdvertJavascriptSetting {
 // ─── Ads Cache (new system) ───────────────────────────────────────────
 
 var (
-	adCache   map[string][]models.Ad // spaceId → active ads
+	adCache   map[string][]models.Ads // spaceId → active ads
 	adCacheMu sync.RWMutex
 )
 
 // LoadAds loads ads into the in-memory cache grouped by spaceId.
-func LoadAds(ads []models.Ad) {
-	cache := make(map[string][]models.Ad)
+func LoadAds(ads []models.Ads) {
+	cache := make(map[string][]models.Ads)
 	for i := range ads {
 		ad := ads[i]
 		if ad.Status != "active" {
@@ -174,7 +174,7 @@ func LoadAds(ads []models.Ad) {
 }
 
 // FindAdsBySpaceID returns active ads for a given spaceId from the cache.
-func FindAdsBySpaceID(spaceID string) []models.Ad {
+func FindAdsBySpaceID(spaceID string) []models.Ads {
 	if spaceID == "" {
 		return nil
 	}
@@ -200,8 +200,8 @@ type ResolvedAds struct {
 	AdJavascripts []string
 }
 
-// ResolveAdsFromAds converts []models.Ad into ResolvedAds for paid plan.
-func ResolveAdsFromAds(ads []models.Ad) ResolvedAds {
+// ResolveAdsFromAds converts []models.Ads into ResolvedAds for paid plan.
+func ResolveAdsFromAds(ads []models.Ads) ResolvedAds {
 	result := ResolvedAds{}
 
 	for _, ad := range ads {
@@ -210,7 +210,7 @@ func ResolveAdsFromAds(ads []models.Ad) ResolvedAds {
 		}
 		switch ad.Type {
 		case "video":
-			if ad.Content.MP4URL != nil && *ad.Content.MP4URL != "" {
+			if ad.Content.Mp4URL != nil && *ad.Content.Mp4URL != "" {
 				result.VastEnabled = true
 			}
 		case "image":
@@ -256,7 +256,7 @@ func ResolveAdsFromPlan(planType string, spaceID string) ResolvedAds {
 	// Resolve video ad IDs → enable VAST if any active
 	for _, adID := range hobby.Vdo {
 		ad := FindAdByID(adID)
-		if ad != nil && ad.Content != nil && ad.Content.MP4URL != nil && *ad.Content.MP4URL != "" {
+		if ad != nil && ad.Content != nil && ad.Content.Mp4URL != nil && *ad.Content.Mp4URL != "" {
 			result.VastEnabled = true
 			break
 		}

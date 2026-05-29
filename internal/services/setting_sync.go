@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"server-content/internal/db/database"
 	"server-content/internal/db/models"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,7 +52,7 @@ func SyncSettings() error {
 	defer cancel()
 
 	settingNames := []string{"player_maintenance", "advert_hobby", "domain_content", "domain_preview", "domain_ads", "domain_playlist"}
-	cursor, err := database.Settings().Find(ctx, bson.M{
+	cursor, err := models.SettingModel.Col().Find(ctx, bson.M{
 		"name": bson.M{"$in": settingNames},
 	})
 	if err != nil {
@@ -89,7 +88,7 @@ func SyncDomains() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cursor, err := database.CustomDomains().Find(ctx, bson.M{})
+	cursor, err := models.CustomDomainModel.Col().Find(ctx, bson.M{})
 	if err != nil {
 		return err
 	}
@@ -119,7 +118,7 @@ func SyncSpaces() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cursor, err := database.Workspaces().Find(ctx, bson.M{})
+	cursor, err := models.WorkspaceModel.Col().Find(ctx, bson.M{})
 	if err != nil {
 		return err
 	}
@@ -148,13 +147,13 @@ func SyncAds() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cursor, err := database.Ads().Find(ctx, bson.M{"status": "active"})
+	cursor, err := models.AdsModel.Col().Find(ctx, bson.M{"status": "active"})
 	if err != nil {
 		return err
 	}
 	defer cursor.Close(ctx)
 
-	var ads []models.Ad
+	var ads []models.Ads
 	if err := cursor.All(ctx, &ads); err != nil {
 		return err
 	}

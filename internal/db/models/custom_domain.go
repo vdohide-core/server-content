@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"server-content/internal/lib/goose"
+	"github.com/zergolf1994/goose"
 )
 
 // PlayerConfig holds video player configuration for a custom domain.

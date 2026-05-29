@@ -67,7 +67,7 @@ func buildHobbyVast(w http.ResponseWriter, adIDs []string) {
 
 	for _, adID := range adIDs {
 		ad := services.FindAdByID(adID)
-		if ad == nil || ad.Content == nil || ad.Content.MP4URL == nil || *ad.Content.MP4URL == "" {
+		if ad == nil || ad.Content == nil || ad.Content.Mp4URL == nil || *ad.Content.Mp4URL == "" {
 			continue
 		}
 		hasActive = true
@@ -111,7 +111,7 @@ func buildHobbyVast(w http.ResponseWriter, adIDs []string) {
           <Creative> </Creative>
         </Creatives>
       </InLine>
-    </Ad>`, vastID, html.EscapeString(name), skipOffset, html.EscapeString(websiteUrl), vastID, html.EscapeString(*ad.Content.MP4URL)))
+    </Ad>`, vastID, html.EscapeString(name), skipOffset, html.EscapeString(websiteUrl), vastID, html.EscapeString(*ad.Content.Mp4URL)))
 	}
 
 	if !hasActive {
@@ -150,8 +150,8 @@ func randomID(n int) string {
 	return string(b)
 }
 
-// buildAdsVast builds VAST XML from new Ad model entries.
-func buildAdsVast(w http.ResponseWriter, adList []models.Ad) {
+// buildAdsVast builds VAST XML from new Ads model entries.
+func buildAdsVast(w http.ResponseWriter, adList []models.Ads) {
 	var ads strings.Builder
 	hasActive := false
 
@@ -159,7 +159,7 @@ func buildAdsVast(w http.ResponseWriter, adList []models.Ad) {
 		if ad.Type != "video" || ad.Content == nil {
 			continue
 		}
-		if ad.Content.MP4URL == nil || *ad.Content.MP4URL == "" {
+		if ad.Content.Mp4URL == nil || *ad.Content.Mp4URL == "" {
 			continue
 		}
 		hasActive = true
@@ -176,11 +176,6 @@ func buildAdsVast(w http.ResponseWriter, adList []models.Ad) {
 			websiteURL = *ad.Content.WebsiteURL
 		}
 
-		placement := "pre_roll"
-		if ad.Content.Placement != nil {
-			placement = *ad.Content.Placement
-		}
-		_ = placement // reserved for future VAST placement logic
 
 		ads.WriteString(fmt.Sprintf(`
     <Ad id="%s" sequence="0">
@@ -208,7 +203,7 @@ func buildAdsVast(w http.ResponseWriter, adList []models.Ad) {
           <Creative> </Creative>
         </Creatives>
       </InLine>
-    </Ad>`, adID, html.EscapeString(ad.Name), skipOffset, html.EscapeString(websiteURL), adID, html.EscapeString(*ad.Content.MP4URL)))
+    </Ad>`, adID, html.EscapeString(ad.Name), skipOffset, html.EscapeString(websiteURL), adID, html.EscapeString(*ad.Content.Mp4URL)))
 	}
 
 	if !hasActive {

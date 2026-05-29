@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"server-content/internal/db/database"
 	"server-content/internal/db/models"
 	"server-content/internal/utils"
 
@@ -31,7 +30,7 @@ func (h *Handler) HandlePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// ─── Step 1: Find file by slug ───────────────────────────────────────
 	var file models.File
-	err := database.Files().FindOne(ctx, bson.M{"slug": slug}).Decode(&file)
+	err := models.FileModel.Col().FindOne(ctx, bson.M{"slug": slug}).Decode(&file)
 	if err != nil {
 		log.Printf("[Playlist] File not found for slug=%s: %v", slug, err)
 		HandleNotFound(w, r)
@@ -46,7 +45,7 @@ func (h *Handler) HandlePlaylist(w http.ResponseWriter, r *http.Request) {
 		"deletedAt":  bson.M{"$eq": nil},
 	}
 
-	cursor, err := database.Medias().Find(ctx, mediaFilter)
+	cursor, err := models.MediaModel.Col().Find(ctx, mediaFilter)
 	if err != nil {
 		log.Printf("[Playlist] Error finding media for fileId=%s: %v", file.ID, err)
 		HandleNotFound(w, r)
@@ -111,7 +110,7 @@ func (h *Handler) HandlePlaylist(w http.ResponseWriter, r *http.Request) {
 		if storageID != "" {
 			storage, ok := storageCache[storageID]
 			if !ok {
-				err := database.Storages().FindOne(ctx, bson.M{"_id": storageID}).Decode(&storage)
+				err := models.StorageModel.Col().FindOne(ctx, bson.M{"_id": storageID}).Decode(&storage)
 				if err == nil {
 					storageCache[storageID] = storage
 				} else {

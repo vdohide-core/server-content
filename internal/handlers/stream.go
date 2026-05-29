@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"server-content/internal/db/database"
 	"server-content/internal/db/models"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,7 +51,7 @@ func (h *Handler) StreamFile(w http.ResponseWriter, r *http.Request) {
 
 	// ─── Step 1: Find file by slug ───────────────────────────────────────
 	var file models.File
-	err := database.Files().FindOne(ctx, bson.M{"slug": fileSlug}).Decode(&file)
+	err := models.FileModel.Col().FindOne(ctx, bson.M{"slug": fileSlug}).Decode(&file)
 	if err != nil {
 		log.Printf("[Stream] File not found for slug=%s: %v", fileSlug, err)
 		sendNotFound(w, r, http.StatusNotFound)
@@ -75,7 +74,7 @@ func (h *Handler) StreamFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var media models.Media
-	err = database.Medias().FindOne(ctx, mediaFilter).Decode(&media)
+	err = models.MediaModel.Col().FindOne(ctx, mediaFilter).Decode(&media)
 	if err != nil {
 		log.Printf("[Stream] Media not found for fileId=%s: %v", file.ID, err)
 		sendNotFound(w, r, http.StatusNotFound)
@@ -93,7 +92,7 @@ func (h *Handler) StreamFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var storage models.Storage
-	err = database.Storages().FindOne(ctx, bson.M{"_id": storageID}).Decode(&storage)
+	err = models.StorageModel.Col().FindOne(ctx, bson.M{"_id": storageID}).Decode(&storage)
 	if err != nil {
 		log.Printf("[Stream] Storage not found for storageId=%s: %v", storageID, err)
 		sendNotFound(w, r, http.StatusNotFound)
